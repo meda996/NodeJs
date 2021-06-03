@@ -218,7 +218,6 @@ export default function Order() {
                         </div>
                     </div>
                 </Paper>
-
             </div>
         </div>
     )

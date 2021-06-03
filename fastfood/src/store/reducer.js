@@ -9,11 +9,15 @@ const persistConfig = {
 };
 
 const initialState = {
-
+    startTime: Date.now(),
 }
 
 const reducer = (state = initialState, action) => {
-
+    switch (action.type) {
+        case actionTypes.LOG_IN:
+            
+        default: return state
+    }
     
 }
 

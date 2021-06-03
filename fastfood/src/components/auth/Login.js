@@ -37,7 +37,7 @@ export default function Login() {
                     type="password" id="password" label="Password" /></div>
             </div>
             <div className={classes.controls}>
-            <Button variant="outlined" style={{marginLeft:"10px"}}  onClick={() => handleLogin()}>Login</Button>
+            <Button variant="outlined" href="/admin" style={{marginLeft:"10px"}}  onClick={() => handleLogin()}>Login</Button>
             <Button variant="outlined" href="/" style={{ marginLeft: "auto", marginRight:"10px"}} >Back</Button>
             </div>
         </Paper>
