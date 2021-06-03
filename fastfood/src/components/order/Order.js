@@ -211,7 +211,6 @@ export default function Order() {
                                     <Button variant="outlined" onClick={() => handleOrder()}>Order Now</Button>
                                     <Button style={{marginLeft:"10px"}} onClick={() => handleClose()} variant="outlined">Close</Button>
                                     </div>
-                                    
                                 </Fade>
                             </Modal>
                             <Button variant="outlined" style={{ marginLeft: "auto", marginRight: "20px" }} onClick={() => handleReset()}>Reset</Button>
