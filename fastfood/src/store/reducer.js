@@ -10,12 +10,16 @@ const persistConfig = {
 
 const initialState = {
     startTime: Date.now(),
+    sessionStartTime: 0,
 }
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.LOG_IN:
-            
+        case actionTypes.GET_SESSION_START:
+            return{
+                ...state,
+                sessionStartTime: Date.now(),
+            }
         default: return state
     }
     
