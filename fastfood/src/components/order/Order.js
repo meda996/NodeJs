@@ -142,7 +142,6 @@ export default function Order() {
     const handleOrder = () => {
         let ingredients = []; 
          ingredientCounter.map(ingredient => {
-            console.log(ingredient);
             if(ingredient.counter > 0){
                 const ing = {
                     name: ingredient._id,
@@ -151,14 +150,12 @@ export default function Order() {
                 ingredients.push(ing);
             }
         });
-        console.log(ingredients);
         const pizza = {
             price: total.price,
             time: total.time,
             size: size.size,
             ingredients: ingredients,
         }
-        console.log(pizza);
         axios.post(`http://localhost:3001/order`,
             {
                 customer: customer,
