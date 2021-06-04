@@ -64,7 +64,7 @@ const server = app.listen(port, () => {
 })
 
 setInterval(() => server.getConnections(
-  (err, connections) => { console.log(`${connections} connections currently open`) }
+  (err, connections) => {  }
 ), 1000);
 
 process.on('SIGTERM', shutDown);

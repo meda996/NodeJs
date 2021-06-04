@@ -17,7 +17,6 @@ exports.login = async (req, res, next) => {
 }
 
 exports.getInfo = async (req,res,next) => {
-    console.log("stigao");
     let ing = [];
     let totalEarned = 0;
 

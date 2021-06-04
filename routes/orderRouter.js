@@ -9,4 +9,8 @@ const orderController = require('../controller/orderController');
 router.route('/')
 .post(que.queLength,orderController.PostOrder, que.putInQue);
 
+router.route('/:orderId')
+.get(orderController.getStatus)
+.delete(orderController.cancleOrder)
+
 module.exports = router;
