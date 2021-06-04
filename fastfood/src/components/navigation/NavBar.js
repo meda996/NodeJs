@@ -68,7 +68,7 @@ function NavBar(props) {
                     >
                         <Tab className={classes.tab} label="Home" /> 
                         <Tab className = {classes.tab} label="Order Now" />
-                        <Tab className = {classes.tab} label="My Orders" />
+                        <Tab className = {classes.tab} style={{display: "none"}} label="My Orders" />
                     </Tabs>
 
                     <Link className={classes.loginLink} to={{

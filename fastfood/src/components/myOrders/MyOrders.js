@@ -7,7 +7,6 @@ export default function MyOrders(){
         <div>
             <Navbar />
             <div style={{marginTop:"90px"}}>
-            Piza piza
             </div>
         </div>
     )
