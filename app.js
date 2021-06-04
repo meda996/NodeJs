@@ -5,7 +5,8 @@ const mongoose = require('mongoose')
 const path = require('path');
 const config = require('./config');
 const cors = require('cors');
-
+const que = require('./que');
+const startTime = Date.now();
 
 const ingredientsRouter = require('./routes/ingredientsRouter');
 const orderRouter = require('./routes/orderRouter');
@@ -47,6 +48,38 @@ app.use(function(req, res, next) {
       });
   });
 
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
   })
+  
+  setInterval(() => server.getConnections(
+    (err, connections) => {}
+  ), 1000);
+  
+  process.on('SIGTERM', shutDown);
+  process.on('SIGINT', shutDown);
+  
+  let connections = [];
+  
+  server.on('connection', connection => {
+      connections.push(connection);
+      connection.on('close', () => connections = connections.filter(curr => curr !== connection));
+  });
+  
+  async function shutDown() {
+    console.log('Received kill signal, shutting down gracefully');
+    const endTime = Date.now();
+
+    server.close(() => {
+        console.log('Closed out remaining connections');
+        process.exit(0);
+    });
+  
+    setTimeout(() => {
+        console.error('Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+    }, 10000);
+  
+    connections.forEach(curr => curr.end());
+    setTimeout(() => connections.forEach(curr => curr.destroy()), 5000);
+  }
