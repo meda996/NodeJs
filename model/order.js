@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({
-    orderTime:{
+    orderTime: {
         type: Date,
         default: Date.now()
     },
@@ -38,19 +38,21 @@ const orderSchema = new Schema({
             required: true
         },
         ingredients: [{
-                name: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: 'Ingredients',
-                    required: true
-                },
-                quantity: {
-                    type: Number,
-                    default: 0,
-                }
+            name: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Ingredients',
+                required: true
+            },
+            quantity: {
+                type: Number,
+                default: 0,
+            }
 
         }],
     },
-    
-})
+},
+    {
+        timestamps: true
+    })
 
 module.exports = mongoose.model('Order', orderSchema);
