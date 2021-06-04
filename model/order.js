@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({
+    status:{
+            //0 for in progress
+            //1 for fullfiled order 
+            type: Number,
+            default: 0,
+    },
     orderTime: {
         type: Date,
         default: Date.now()

@@ -1,9 +1,31 @@
 
 const que = [];
-const OrderHistory = require('./controller/orderHistoryController');
+const OrderModel = require('./model/order');
+const OrderController = require('./controller/orderController');
+let chefStartTime = 0;
+
+const fs = require('fs');
+
+
+exports.fillQue = async (timeLeft) => {
+    const reformQue = await OrderModel.find({ status: 0 });
+    reformQue.map(element => {
+        if (reformQue.length > 0) {
+            que.push(element);
+        }
+    })
+    if (reformQue.length > 0) {
+        que[0].pizza.time = que[0].pizza.time - timeLeft;
+    }
+    if (que.length > 0) {
+        chef();
+    }
+
+    console.log(reformQue);
+}
+
 
 exports.queLength = async (req, res, next) => {
-    console.log("in que")
     if (que.length + 1 > 3) {
         return res.status(200).send("Too many orders please try agian in few minutes!");
     }
@@ -21,13 +43,15 @@ exports.putInQue = async (req, res, next) => {
 
 function chef() {
     let pizza = que[0].pizza;
+    chefStartTime = Date.now();
     const test = setTimeout(function () {
         console.log("Pizza delivery!");
+        chefStartTime = new Date();
         order = {
             id: que[0].orderId,
             status: 1
         };
-        OrderHistory.PostOrder(order);
+        OrderController.PatchOrder(order);
         que.splice(0, 1);
         if (que.length < 1) {
             clearInterval(test);
@@ -38,6 +62,11 @@ function chef() {
     }, pizza.time);
 }
 
-exports.onShutDown = async (req,res,next) => {
-    
+process.on('SIGTERM', shutDown);
+process.on('SIGINT', shutDown);
+
+function shutDown() {
+    const time = Date.now() - chefStartTime;
+    let data = JSON.stringify({ timeLeft: time });
+    fs.writeFileSync('que.json', data);
 }

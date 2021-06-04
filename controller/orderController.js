@@ -1,6 +1,5 @@
 const createError = require('http-errors');
 const Order = require('../model/order');
-const OrderHistory = require('../model/orderHistory');
 
 
 exports.PostOrder = async (req,res,next) => {
@@ -12,21 +11,20 @@ exports.PostOrder = async (req,res,next) => {
         })
 
         await order.save();
-        const forQue = {
-            pizza: req.body.pizza,
-            orderId: order._id,
-        }
-        
-        const orderHistory = new OrderHistory({
-            order: order._id,
-        })
 
-        await orderHistory.save();
 
-        req.forQue = forQue;
+        req.forQue = order;
         next();
         res.status(201).send({order:order});
     }catch(e){
         next(e);
+    }
+}
+
+exports.PatchOrder = async (req,res,next) => {
+    const update = await Order.findOne({order:req.id});
+    if(update){
+       update.status = req.status;
+       update.save();
     }
 }
