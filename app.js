@@ -9,11 +9,6 @@ const que = require('./que');
 let startTime = Date.now();
 const fs = require('fs');
 
-
-let rawdata = fs.readFileSync('./state.json');
-let state = JSON.parse(rawdata);
-const upTime = state.upTime;
-
 let rawdata2 = fs.readFileSync('./que.json');
 let queTime = JSON.parse(rawdata2);
 const timeLeft = queTime.timeLeft;
@@ -24,6 +19,7 @@ if(timeLeft < 20000){
 
 const ingredientsRouter = require('./routes/ingredientsRouter');
 const orderRouter = require('./routes/orderRouter');
+const adminRouter = require('./routes/adminRouter');
 
 mongoose.connect(
   'mongodb+srv://petar:' + config.ATLAS_PW + '@cluster0.7b35g.mongodb.net/spartans?retryWrites=true&w=majority',
@@ -40,6 +36,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use('/ingredients', ingredientsRouter);
 app.use('/order', orderRouter);
+app.use('/admin', adminRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

@@ -21,7 +21,6 @@ exports.fillQue = async (timeLeft) => {
         chef();
     }
 
-    console.log(reformQue);
 }
 
 
@@ -47,8 +46,9 @@ function chef() {
     const test = setTimeout(function () {
         console.log("Pizza delivery!");
         chefStartTime = new Date();
+        console.log(que[0]);
         order = {
-            id: que[0].orderId,
+            id: que[0]._id,
             status: 1
         };
         OrderController.PatchOrder(order);
