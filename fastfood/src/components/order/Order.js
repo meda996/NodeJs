@@ -37,9 +37,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const sizes = [
-    { size: "small", price: 200 },
-    { size: "medium", price: 400 },
-    { size: "large", price: 600 },
+    { size: "small", price: 200, time: 1000 },
+    { size: "medium", price: 400, time: 2000 },
+    { size: "large", price: 600, time: 3000 },
 ]
 
 export default function Order() {
@@ -49,10 +49,19 @@ export default function Order() {
     const [alerted, setAlerted] = React.useState({
         alerted: "false",
         msg: ""
-    })
+    });
     const [size, setSize] = React.useState(sizes[0]);
-    const [total, setTotal] = React.useState(size.price);
+    const [total, setTotal] = React.useState({
+        price: sizes[0].price,
+        time: sizes[0].time
+    });
     const [open, setOpen] = React.useState(false);
+    const [customer, setCustomer] = React.useState({
+        firstname: "",
+        lastname: "",
+        address: "",
+        phone: "",
+    });
 
 
     useEffect(() => {
@@ -71,17 +80,17 @@ export default function Order() {
                         index++;
                     })
                     setIngredientCounter(ingredientCounterArray);
-                }).catch(err=> {
+                }).catch(err => {
                     console.log(err);
                 })
         }
     })
 
-    const handleChange = (event, index) => {
+     const handleChange = (event, index) => {
         if (event.target.id === "add") {
             const newArray = ingredientCounter;
             newArray[index].counter = newArray[index].counter + 1;
-            setTotal(newArray[index].price + total);
+            setTotal({ price: newArray[index].price + total.price, time: newArray[index].time + total.time });
             setIngredientCounter(newArray);
             setUpdate(!update)
         }
@@ -94,44 +103,76 @@ export default function Order() {
             } else {
                 const newArray = ingredientCounter;
                 newArray[index].counter = newArray[index].counter - 1;
-                setTotal(total - newArray[index].price);
+                setTotal({ price: total.price - newArray[index].price, time: total.time - newArray[index].time });
                 setIngredientCounter(newArray);
                 setUpdate(!update)
             }
 
         }
-    }
+     }
 
     const handleSelect = (event) => {
         if (event.target.value === "small") {
-            setTotal(total - size.price + sizes[0].price);
+            setTotal({price:total.price - size.price + sizes[0].price,time:total.time - size.time + sizes[0].time});
             setSize(sizes[0]);
         }
         if (event.target.value === "medium") {
-            setTotal(total - size.price + sizes[1].price);
+            setTotal({price:total.price - size.price + sizes[1].price,time:total.time - size.time + sizes[1].time});
             setSize(sizes[1]);
         }
         if (event.target.value === "large") {
-            setTotal(total - size.price + sizes[2].price);
+            setTotal({price:total.price - size.price + sizes[2].price,time:total.time - size.time + sizes[2].time});
             setSize(sizes[2]);
         }
     }
 
     const handleOpen = () => {
         setOpen(true);
-      };
-    
-      const handleClose = () => {
+    };
+
+    const handleClose = () => {
         setOpen(false);
-      };
+    };
 
     const handleReset = () => {
         setSize(sizes[0]);
-        setTotal(sizes[0].price);
+        setTotal({price:sizes[0].price,time:sizes[0].time});
         setIngredientCounter([]);
     }
     const handleOrder = () => {
-        console.log("Handled");
+        let ingredients = []; 
+         ingredientCounter.map(ingredient => {
+            console.log(ingredient);
+            if(ingredient.counter > 0){
+                const ing = {
+                    name: ingredient._id,
+                    quantity: ingredient.counter,
+                }
+                ingredients.push(ing);
+            }
+        });
+        console.log(ingredients);
+        const pizza = {
+            price: total.price,
+            time: total.time,
+            size: size.size,
+            ingredients: ingredients,
+        }
+        console.log(pizza);
+        axios.post(`http://localhost:3001/order`,
+            {
+                customer: customer,
+                pizza: pizza,
+            }).then(response => {
+                console.log(response);
+            }).catch(err => { console.log(err) })
+    }
+
+    const handleInput = (event) => {
+        setCustomer({
+            ...customer,
+            [event.target.id]: event.target.value
+        })
     }
 
     return (
@@ -182,9 +223,9 @@ export default function Order() {
                     <h1>Checkout!</h1>
                     <hr />
                     <div style={{ marginLeft: "15px" }}>
-                        <label>Total Price:</label> {total}$
+                        <label>Total Price:</label> {total.price}$
                     <br />
-                        <label>Approx. Time:</label>
+                        <label>Approx. Time:</label> {Math.ceil(total.time/6000)}  min
                         <br />
                         <label>Ingredients:</label>
                         <div style={{ display: "inline-flex", width: "100%", marginTop: "10px", marginBottom: "10px" }}>
@@ -203,15 +244,15 @@ export default function Order() {
                             >
                                 <Fade in={open}>
                                     <div className={classes.modalPaper}>
-                                    <div><TextField id="firstname" label="Firstname" /></div>
-                                    <div><TextField id="lastname" label="Lastname" /></div>
-                                    <div><TextField id="address" label="Address" /></div>
-                                    <div><TextField id="phone" label="Number" /></div>
-                                    <h3>Total Price: {total}$</h3>
-                                    <Button variant="outlined" onClick={() => handleOrder()}>Order Now</Button>
-                                    <Button style={{marginLeft:"10px"}} onClick={() => handleClose()} variant="outlined">Close</Button>
+                                        <div><TextField onChange={handleInput} value={customer.firstname} id="firstname" label="Firstname" /></div>
+                                        <div><TextField onChange={handleInput} value={customer.lastname} id="lastname" label="Lastname" /></div>
+                                        <div><TextField onChange={handleInput} value={customer.address} id="address" label="Address" /></div>
+                                        <div><TextField onChange={handleInput} value={customer.phone} id="phone" label="Number" /></div>
+                                        <h3>Total Price: {total.price}$</h3>
+                                        <Button variant="outlined" onClick={() => handleOrder()}>Order Now</Button>
+                                        <Button style={{ marginLeft: "10px" }} onClick={() => handleClose()} variant="outlined">Close</Button>
                                     </div>
-                                    
+
                                 </Fade>
                             </Modal>
                             <Button variant="outlined" style={{ marginLeft: "auto", marginRight: "20px" }} onClick={() => handleReset()}>Reset</Button>
